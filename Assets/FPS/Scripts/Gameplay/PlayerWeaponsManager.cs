@@ -39,6 +39,8 @@ namespace Unity.FPS.Gameplay
 
         //무기 교체
         public UnityAction<WeaponController> OnSwitchToWeapon;  //무기 교체할때마다 등록된 함수 호출
+        public UnityAction<WeaponController, int> OnAddedWeapon;//무기를 추가할때마다 등록된 함수 호출
+        public UnityAction<WeaponController, int> OnRemoveWeapon;//무기를 잃을때마다 등록된 함수 호출
 
         private WeaponSwithState weaponSwithState;          //무기 교체시 상태
 
@@ -134,7 +136,7 @@ namespace Unity.FPS.Gameplay
                 //마우스 우클릭이나 왼쪽 Alt버튼을 누르고있으면 true
                 //조준 입력값 처리
                 IsAiming = playerInputHandler.GetAimInputHeld();
-                
+                //Debug.Log("activeWeapon.shootType = " + activeWeapon.shootType);
                 //저격 모드 처리
                 if (activeWeapon.shootType == WeaponShootType.Sniper)
                 {
@@ -263,7 +265,7 @@ namespace Unity.FPS.Gameplay
                 weaponMainLocalPosition = Vector3.Lerp(weaponMainLocalPosition, aimingWeaponPosition.localPosition + activeWeapon.aimOffset, aimingAnimationSpeed * Time.deltaTime);
 
                 //저격모드 시작
-                if (isScopeOn)
+                if (isScopeOn || activeWeapon.shootType == WeaponShootType.Sniper)
                 {
                     //시작지점(weaponMainLocalPosition), 목표지점(aimingWeaponPosition.localPosition + activeWeapon.aimOffset)까지의 거리를 구한다
                     float dist = Vector3.Distance(weaponMainLocalPosition, aimingWeaponPosition.localPosition + activeWeapon.aimOffset);
@@ -405,6 +407,9 @@ namespace Unity.FPS.Gameplay
                     weaponInstance.SourcePrefab = weaponPrefab.gameObject;
                     weaponInstance.ShowWeapon(false);
 
+                    //무기장착
+                    OnAddedWeapon?.Invoke(weaponInstance, i);
+
                     weaponSlots[i] = weaponInstance;
 
                     return true;
@@ -415,7 +420,33 @@ namespace Unity.FPS.Gameplay
             return false;
         }
 
-        //매개변수로 들어온 
+        //WeaponSlots에 장착된 무기 제거
+        public bool RemoveWeapon(WeaponController oldWeapon)
+        {
+            for (int i = 0; i < weaponSlots.Length; i++)
+            {
+                if (weaponSlots[i] == oldWeapon)
+                {
+                    //weaponSlots에서 리스트 제거
+                    weaponSlots[i] = null;
+
+                    OnRemoveWeapon?.Invoke(oldWeapon, i);
+
+                    Destroy(oldWeapon.gameObject);
+
+                    //현재 제거한 무기가 Active상태면 새로운 액티브 무기를 찾는다
+                    if (i == ActiveWeaponIndex)
+                    {
+                        SwitchWeapon(true);
+                    }
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //매개변수로 들어온 프리팹으로 만든 무기가 있는지 체크
         private WeaponController HasWeapon(WeaponController weaponPrefab)
         {
             for (int i = 0; i < weaponSlots.Length; i++)

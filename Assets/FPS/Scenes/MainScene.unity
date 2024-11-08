@@ -5769,6 +5769,7 @@ GameObject:
   - component: {fileID: 8073978906825032892}
   - component: {fileID: 8073978906825032893}
   - component: {fileID: 8073978906825032894}
+  - component: {fileID: 8073978906825032895}
   m_Layer: 5
   m_Name: GameHUD
   m_TagString: Untagged
@@ -6061,6 +6062,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scopeUI: {fileID: 681234730}
+--- !u!114 &8073978906825032895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5790203944389090552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b4a4e0140cd85e469e64b84ebbc38b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoPanel: {fileID: 8596418510904582542}
+  ammoCountPrefab: {fileID: 645032500860478885, guid: fb727941cbd15634c86dc7769f0e8fde,
+    type: 3}
 --- !u!114 &8118132282568604719
 MonoBehaviour:
   m_ObjectHideFlags: 0

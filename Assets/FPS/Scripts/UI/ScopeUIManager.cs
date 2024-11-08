@@ -22,7 +22,7 @@ namespace Unity.FPS.UI
 
         public void OnScope()
         {
-            Debug.Log("dd");
+            //Debug.Log("dd");
             scopeUI.SetActive(true);
         }
 
