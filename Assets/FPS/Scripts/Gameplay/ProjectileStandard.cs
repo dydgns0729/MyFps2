@@ -39,14 +39,14 @@ namespace Unity.FPS.Gameplay
 
         //
         public float damage = 20f;
-
+        private DamageArea damageArea;
         #endregion
 
         private void OnEnable()
         {
             projectileBase = GetComponent<ProjectileBase>();
             projectileBase.OnShoot += OnShoot;
-
+            damageArea = GetComponent<DamageArea>();
             //
             Destroy(gameObject, maxLiftTime);
         }
@@ -68,7 +68,7 @@ namespace Unity.FPS.Gameplay
             if (weaponsManager)
             {
                 Vector3 cameraToMuzzle = projectileBase.InitialPosition - weaponsManager.weaponCamera.transform.position;
-                
+
                 if (Physics.Raycast(weaponsManager.weaponCamera.transform.position, cameraToMuzzle.normalized, out RaycastHit hit, cameraToMuzzle.magnitude, hittableLayers, QueryTriggerInteraction.Collide))
                 {
                     if (IsHitValid(hit))
@@ -126,6 +126,21 @@ namespace Unity.FPS.Gameplay
         //Hit 구현, 데미지, vfx, Sfx
         private void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
+            if (damageArea)
+            {
+                damageArea.InflictDamageArea(damage, point, hittableLayers, QueryTriggerInteraction.Collide, projectileBase.Owner);
+            }
+            else
+            {
+                Damageable damageable = collider.GetComponent<Damageable>();
+                if (damageable)
+                {
+                    damageable.InflictDamage(damage, false, projectileBase.Owner);
+                }
+            }
+            Debug.Log($"damage = {damage}");
+
+
             //Vfx
             if (impactVfxPrefab)
             {
