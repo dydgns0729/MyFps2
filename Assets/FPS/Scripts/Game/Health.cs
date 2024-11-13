@@ -58,7 +58,7 @@ namespace Unity.FPS.Game
         //damageSource: 데미지를 주는 주체
         public void TakeDamage(float damage, GameObject damageSource)
         {
-            Debug.Log($"take damage = {damage}");
+            Debug.Log($"gameobject name = {gameObject.name} / take damage = {damage}");
             //무적 체크
             if (Invincible)
                 return;
