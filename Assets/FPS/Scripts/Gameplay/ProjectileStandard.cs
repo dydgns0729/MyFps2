@@ -138,7 +138,7 @@ namespace Unity.FPS.Gameplay
                     damageable.InflictDamage(damage, false, projectileBase.Owner);
                 }
             }
-            Debug.Log($"damage = {damage}");
+            //Debug.Log($"damage = {damage}");
 
 
             //Vfx
