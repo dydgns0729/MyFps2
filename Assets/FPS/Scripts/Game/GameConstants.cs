@@ -1,7 +1,7 @@
-namespace Unity.FPS.Game
+﻿namespace Unity.FPS.Game
 {
     /// <summary>
-    /// Input 과 관련된 string 상수 선언
+    /// 인풋과 관련된 string 상수 선언
     /// </summary>
     public class GameConstants
     {

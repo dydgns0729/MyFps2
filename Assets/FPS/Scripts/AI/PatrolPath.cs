@@ -4,54 +4,60 @@ using UnityEngine;
 namespace Unity.FPS.AI
 {
     /// <summary>
-    /// íŒ¨íŠ¸ë¡¤ Waypointë“¤ì„ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤
+    /// ÆĞÆ®·Ñ WaypointµéÀ» °ü¸®ÇÏ´Â Å¬·¡½º
     /// </summary>
     public class PatrolPath : MonoBehaviour
     {
         #region Variables
         public List<Transform> wayPoints = new List<Transform>();
 
-        //this Pathë¥¼ íŒ¨íŠ¸ë¡¤í•˜ëŠ” Enemyë“¤ ë¦¬ìŠ¤íŠ¸
+        //this Path¸¦ ÆĞÆ®·ÑÇÏ´Â enemyµé
         public List<EnemyController> enemiesToAssign = new List<EnemyController>();
         #endregion
 
         private void Start()
         {
-            //ë“±ë¡ëœ enemyì—ê²Œ íŒ¨íŠ¸ë¡¤í•  íŒ¨ìŠ¤(this) ì§€ì •
+            //µî·ÏµÈ enemy¿¡°Ô ÆĞÆ®·ÑÇÒ ÆĞ½º(this) ÁöÁ¤
             foreach (var enemy in enemiesToAssign)
             {
                 enemy.PatrolPath = this;
             }
         }
 
-        //íŠ¹ì •(enemy) ìœ„ì¹˜ë¡œ ë¶€í„° ì§€ì •ëœ WayPointì™€ì˜ ê±°ë¦¬ êµ¬í•˜ê¸°
-        public float GetDistanceToWaypoint(Vector3 origin, int wayPointIndex)
+        //Æ¯Á¤(enemy) À§Ä¡·Î ºÎÅÍ ÁöÁ¤µÈ WayPoint¿ÍÀÇ °Å¸® ±¸ÇÏ±â
+        public float GetDistanceToWayPoint(Vector3 origin, int wayPointIndex)
         {
-            if (wayPointIndex < 0 || wayPointIndex >= wayPoints.Count || wayPoints[wayPointIndex] == null)
+            if (wayPointIndex < 0 || wayPointIndex >= wayPoints.Count
+                || wayPoints[wayPointIndex] == null)
             {
                 return -1f;
             }
+
             return (wayPoints[wayPointIndex].position - origin).magnitude;
         }
 
-        //indexë¡œ ì§€ì •ëœ WayPointì˜ ìœ„ì¹˜ ë°˜í™˜
+        //index·Î ÁöÁ¤µÈ WayPointÀÇ À§Ä¡ ¹İÈ¯
         public Vector3 GetPositionOfWayPoint(int wayPointIndex)
         {
-            if (wayPointIndex < 0 || wayPointIndex >= wayPoints.Count || wayPoints[wayPointIndex] == null)
+            if (wayPointIndex < 0 || wayPointIndex >= wayPoints.Count
+                || wayPoints[wayPointIndex] == null)
             {
                 return Vector3.zero;
             }
+
             return wayPoints[wayPointIndex].position;
         }
 
-        //ê¸°ì¦ˆëª¨ë¡œ Path ê·¸ë¦¬ê¸°
+
+
+        //±âÁî¸ğ·Î Path ±×¸®±â
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.cyan;
             for (int i = 0; i < wayPoints.Count; i++)
             {
                 int nextIndex = i + 1;
-                if (nextIndex >= wayPoints.Count)
+                if(nextIndex >= wayPoints.Count)
                 {
                     nextIndex -= wayPoints.Count;
                 }
@@ -59,5 +65,6 @@ namespace Unity.FPS.AI
                 Gizmos.DrawSphere(wayPoints[i].position, 0.1f);
             }
         }
+
     }
 }

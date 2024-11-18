@@ -6,22 +6,21 @@ namespace Unity.FPS.Gameplay
     public class ChargedWeaponEffectHandler : MonoBehaviour
     {
         #region Variables
-        //VFX
-        public GameObject chargingObject;               //ì¶©ì „í•˜ëŠ” ë°œì‚¬ì²´
-        public GameObject spiningFrame;                 //ë°œì‚¬ì²´ë¥¼ ê°ì‹¸ê³  ìˆëŠ” íšŒì „í•˜ëŠ” í”„ë ˆì„
-        public GameObject distOrbitParticlePrefab;      //ë°œì‚¬ì²´ë¥¼ ê°ì‹¸ê³  ìˆëŠ” íšŒì „í•˜ëŠ” ì´í™íŠ¸
+        public GameObject chargingObject;               //ÃæÀüÇÏ´Â ¹ß»çÃ¼
+        public GameObject spiningFrame;                 //¹ß»çÃ¼¸¦ °¨½Î°í ÀÖ´Â È¸ÀüÇÏ´Â ÇÁ·¹ÀÓ
+        public GameObject distOrbitParticePrefab;       //¹ß»çÃ¼¸¦ °¨½Î°í ÀÖ´Â È¸ÀüÇÏ´Â ÀÌÆåÆ®
 
-        public MinMaxVector3 scale;                     //ë°œì‚¬ì²´ì˜ í¬ê¸° ì„¤ì •ê°’
+        public MinMaxVector3 scale;                     //¹ß»çÃ¼ÀÇ Å©±â ¼³Á¤°ª
 
         [SerializeField] private Vector3 offset;
         public Transform parentTransform;
 
-        public MinMaxFloat orbitY;                      //ì´í™íŠ¸ ì„¤ì •ê°’
-        public MinMaxVector3 radius;                    //ì´í™íŠ¸ ì„¤ì •ê°’
+        public MinMaxFloat orbitY;                      //ÀÌÆåÆ® ¼³Á¤°ª
+        public MinMaxVector3 radius;                    //ÀÌÆåÆ® ¼³Á¤°ª
 
-        public MinMaxFloat spiningSpeed;                //íšŒì „ ì„¤ì •ê°’
+        public MinMaxFloat spiningSpeed;                //È¸Àü ¼³Á¤°ª
 
-        //SFX
+        //sfx
         public AudioClip chargeSound;
         public AudioClip loopChargeWeaponSfx;
 
@@ -32,8 +31,9 @@ namespace Unity.FPS.Gameplay
 
         private AudioSource audioSource;
         private AudioSource audioSourceLoop;
+
         //
-        public GameObject particleInstance { get; private set; }
+        public GameObject particleInstance {  get; private set; }
         private ParticleSystem diskOrbitParticle;
         private ParticleSystem.VelocityOverLifetimeModule velocityOverLifetimeModule;
 
@@ -41,27 +41,26 @@ namespace Unity.FPS.Gameplay
 
         private float lastChargeTriggerTimeStamp;
         private float endChargeTime;
-        private float chargeRatio;              //í˜„ì¬ ì¶©ì „ë¥ 
-        #endregion 
+        private float chargeRatio;                  //ÇöÀç ÃæÀü·ü
+        #endregion
+
         private void Awake()
         {
-            //chargeSound play
+            //chargeSound  play
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.clip = chargeSound;
             audioSource.playOnAwake = false;
-            audioSource.loop = false;
 
             //loopChargeWeaponSfx play
             audioSourceLoop = gameObject.AddComponent<AudioSource>();
             audioSourceLoop.clip = loopChargeWeaponSfx;
             audioSourceLoop.playOnAwake = false;
-            audioSource.loop = true;
-
+            audioSourceLoop.loop = true;
         }
 
-        void SpawnParticleSystem()
+        void SpawParticleSystem()
         {
-            particleInstance = Instantiate(distOrbitParticlePrefab, parentTransform != null ? parentTransform : transform);
+            particleInstance = Instantiate(distOrbitParticePrefab, parentTransform != null ? parentTransform : transform);
             particleInstance.transform.localPosition += offset;
 
             FindReference();
@@ -73,63 +72,62 @@ namespace Unity.FPS.Gameplay
             velocityOverLifetimeModule = diskOrbitParticle.velocityOverLifetime;
 
             weaponController = GetComponent<WeaponController>();
-
         }
 
         private void Update()
         {
-            //í•œë²ˆë§Œ ê°ì²´ ë§Œë“¤ê¸°
+            //ÇÑ¹ø¸¸ °´Ã¼ ¸¸µé±â
             if (particleInstance == null)
             {
-                SpawnParticleSystem();
+                SpawParticleSystem();
             }
-
+                        
             diskOrbitParticle.gameObject.SetActive(weaponController.IsWeaponActive);
             chargeRatio = weaponController.CurrentCharge;
-
-            //VFX
+                        
             //disk, frame
             chargingObject.transform.localScale = scale.GetValueFromRatio(chargeRatio);
-            if (spiningFrame)
+            if(spiningFrame)
             {
-                spiningFrame.transform.localRotation = Quaternion.Euler(0f, spiningSpeed.GetValueFromRatio(chargeRatio) * Time.deltaTime, 0f);
+                spiningFrame.transform.localRotation *= Quaternion.Euler( 0f,
+                    spiningSpeed.GetValueFromRatio(chargeRatio) * Time.deltaTime, 
+                    0f );
             }
-
-            //particle
+            ////VFX particle
             velocityOverLifetimeModule.orbitalY = orbitY.GetValueFromRatio(chargeRatio);
             diskOrbitParticle.transform.localScale = radius.GetValueFromRatio(chargeRatio);
 
             //SFX
-            if (chargeRatio > 0f)
+            if(chargeRatio > 0f)
             {
-                if (audioSourceLoop.isPlaying == false && weaponController.lastChargeTriggerTimeStamp > lastChargeTriggerTimeStamp)
+                if(audioSourceLoop.isPlaying == false &&
+                    weaponController.lastChargeTriggerTimeStamp > lastChargeTriggerTimeStamp)
                 {
                     lastChargeTriggerTimeStamp = weaponController.lastChargeTriggerTimeStamp;
-                    if (useProceduralPitchOnLoop == false)
+                    if(useProceduralPitchOnLoop == false)
                     {
                         endChargeTime = Time.time + chargeSound.length;
                         audioSource.Play();
                     }
-                    else
-                    {
-                        audioSourceLoop.pitch = Mathf.Lerp(1.0f, maxProceduralPitchValue, chargeRatio);
-                    }
+                    audioSourceLoop.Play();
                 }
+
+                if (useProceduralPitchOnLoop == false)  //µÎ°³ÀÇ »ç¿îµå ÆäÀÌµå È¿°ú·Î ÃæÀü Ç¥Çö
+                {
+                    float volumeRatio = Mathf.Clamp01((endChargeTime - Time.time - fadeLoopDuration) / fadeLoopDuration);
+                    audioSource.volume = volumeRatio;
+                    audioSourceLoop.volume = 1f - volumeRatio;
+                }
+                else  //·çÇÁ»ç¿îµåÀÇ Àç»ı¼Óµµ·Î ÃæÀü Ç¥Çö
+                {
+                    audioSourceLoop.pitch = Mathf.Lerp(1.0f, maxProceduralPitchValue, chargeRatio);
+                }
+
             }
             else
             {
                 audioSource.Stop();
                 audioSourceLoop.Stop();
-            }
-            if (useProceduralPitchOnLoop == false)  //ë‘ê°œì˜ ì‚¬ìš´ë“œ í˜ì´ë“œ íš¨ê³¼ë¡œ ì¶©ì „ í‘œí˜„
-            {
-                float volumeRatio = Mathf.Clamp01((endChargeTime - Time.time) / fadeLoopDuration);
-                audioSource.volume = volumeRatio;
-                audioSourceLoop.volume = 1f - volumeRatio;
-            }
-            else        //ë£¨í”„ì‚¬ìš´ë“œì˜ ì¬ìƒì†ë„ë¡œ ì¶©ì „ í‘œí˜„
-            {
-                audioSourceLoop.pitch = Mathf.Lerp(1.0f, maxProceduralPitchValue, chargeRatio);
             }
         }
     }

@@ -1,43 +1,45 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.FPS.Game;
+using Unity.FPS.Gameplay;
 
 namespace Unity.FPS.Gameplay
 {
     /// <summary>
-    /// ë°œì‚¬ì²´ í‘œì¤€í˜•
+    /// ¹ß»çÃ¼ Ç¥ÁØÇü
     /// </summary>
     public class ProjectileStandard : ProjectileBase
     {
         #region Variables
-        //ìƒì„±
+        //»ı¼º
         private ProjectileBase projectileBase;
         private float maxLiftTime = 5f;
 
-        //ì´ë™
+        //ÀÌµ¿
         public float speed = 20f;
-        [SerializeField] public float gravityDown = 0f;
+        public float gravityDown = 0f;
         public Transform root;
         public Transform tip;
 
         private Vector3 velocity;
         private Vector3 lastRootPosition;
-        private float shotTime;
+        private float shootTime;
 
-        //ì¶©ëŒ
-        public float radius = 0.01f;           //ì¶©ëŒ ê²€ì‚¬í•˜ëŠ” êµ¬ì²´ì˜ ë°˜ê²½
+        //Ãæµ¹
+        public float radius = 0.01f;                   //Ãæµ¹ °Ë»çÇÏ´Â ±¸Ã¼ÀÇ ¹İ°æ
 
-        public LayerMask hittableLayers = -1;   //Hitê°€ ê°€ëŠ¥í•œ Layer
-        private List<Collider> ignoredColliders;//HitíŒì •ì„ ì œì™¸í•  ì½œë¼ì´ë” ë¦¬ìŠ¤íŠ¸
+        public LayerMask hittableLayers = -1;           //Hit°¡ °¡´ÉÇÑ Layer
+        private List<Collider> ignoredColliers;         //Hit ÆÇÁ¤½Ã ¹«½ÃÇÏ´Â Ãæµ¹Ã¼ ¸®½ºÆ®
 
-        //ì¶©ëŒì—°ì¶œ
-        public GameObject impactVfxPrefab;      //íƒ€ê²© íš¨ê³¼
+        //Ãæµ¹ ¿¬Ãâ
+        public GameObject impackVfxPrefab;              //Å¸°İ ÀÌÆåÆ®
         [SerializeField] private float impactVfxLifeTime = 5f;
         private float impactVfxSpawnOffset = 0.1f;
 
-        public AudioClip impactSfxClip;         //íƒ€ê²©ìŒ
+        public AudioClip impactSfxClip;                //Å¸°İ È¿°úÀ½
 
-        //
+        //µ¥¹ÌÁö
         public float damage = 20f;
         private DamageArea damageArea;
         #endregion
@@ -46,11 +48,14 @@ namespace Unity.FPS.Gameplay
         {
             projectileBase = GetComponent<ProjectileBase>();
             projectileBase.OnShoot += OnShoot;
+
             damageArea = GetComponent<DamageArea>();
-            //
+
             Destroy(gameObject, maxLiftTime);
         }
-        //Shoot ì„¤ì •
+
+
+        //shoot °ª ¼³Á¤
         new void OnShoot()
         {
             velocity = transform.forward * speed;
@@ -58,18 +63,19 @@ namespace Unity.FPS.Gameplay
 
             lastRootPosition = root.position;
 
-            //ë¬´ì‹œ ì¶©ëŒ ë¦¬ìŠ¤íŠ¸ìƒì„± - projectileì„ ë°œì‚¬í•˜ëŠ” ìì‹ ì˜ ì¶©ëŒì²´ë¥¼ ê°€ì ¸ì™€ì„œ ë“±ë¡
-            ignoredColliders = new List<Collider>();
+            //¹«½Ã Ãæµ¹ ¸®½ºÆ® »ı¼º - projectilÀ» ¹ß»çÇÏ´Â ÀÚ½ÅÀÇ ¸ğµç Ãæµ¹Ã¼¸¦ °¡Á®¿Í¼­ µî·Ï
+            ignoredColliers = new List<Collider>();
             Collider[] ownerColliders = projectileBase.Owner.GetComponentsInChildren<Collider>();
-            ignoredColliders.AddRange(ownerColliders);
+            ignoredColliers.AddRange(ownerColliders);
 
-            //í”„ë¡œì íƒ€ì¼ì´ ë²½ì„ ëš«ê³  ë‚ ì•„ê°€ëŠ” ë²„ê·¸ ìˆ˜ì •
+            //ÇÁ·ÎÁ§Å¸ÀÏÀÌ º®À» ¶Õ°í ³¯¾Æ°¡´Â ¹ö±× ¼öÁ¤
             PlayerWeaponsManager weaponsManager = projectileBase.Owner.GetComponent<PlayerWeaponsManager>();
             if (weaponsManager)
             {
                 Vector3 cameraToMuzzle = projectileBase.InitialPosition - weaponsManager.weaponCamera.transform.position;
-
-                if (Physics.Raycast(weaponsManager.weaponCamera.transform.position, cameraToMuzzle.normalized, out RaycastHit hit, cameraToMuzzle.magnitude, hittableLayers, QueryTriggerInteraction.Collide))
+                if(Physics.Raycast(weaponsManager.weaponCamera.transform.position, cameraToMuzzle.normalized,
+                    out RaycastHit hit, cameraToMuzzle.magnitude, hittableLayers,
+                    QueryTriggerInteraction.Collide))
                 {
                     if (IsHitValid(hit))
                     {
@@ -77,56 +83,83 @@ namespace Unity.FPS.Gameplay
                     }
                 }
             }
-
         }
 
         private void Update()
         {
-            //ì´ë™
+            //ÀÌµ¿
             transform.position += velocity * Time.deltaTime;
 
-            //ì¤‘ë ¥
+            //Áß·Â
             if (gravityDown > 0f)
             {
                 velocity += Vector3.down * gravityDown * Time.deltaTime;
             }
 
-            //ì¶©ëŒì²´í¬
+            //Ãæµ¹
             RaycastHit cloestHit = new RaycastHit();
             cloestHit.distance = Mathf.Infinity;
-            bool foundHit = false;                  //Hit ì¶©ëŒì²´í¬
+            bool foundHit = false;                  //hitÇÑ Ãæµ¹Ã¼¸¦ Ã£¾Ò´ÂÁö ¿©ºÎ
 
             //Sphere Cast
             Vector3 displacementSinceLastFrame = tip.position - lastRootPosition;
-            RaycastHit[] hits = Physics.SphereCastAll(lastRootPosition, radius, displacementSinceLastFrame.normalized, displacementSinceLastFrame.magnitude, hittableLayers, QueryTriggerInteraction.Collide);
+            RaycastHit[] hits = Physics.SphereCastAll(lastRootPosition, radius,
+                displacementSinceLastFrame.normalized, displacementSinceLastFrame.magnitude,
+                hittableLayers, QueryTriggerInteraction.Collide);
 
             foreach (var hit in hits)
             {
-                if (IsHitValid(hit) && hit.distance < cloestHit.distance)
+                if(IsHitValid(hit) && hit.distance < cloestHit.distance)
                 {
                     foundHit = true;
                     cloestHit = hit;
                 }
             }
-            //Hit ê°€ëŠ¥í•œ ì¶©ëŒì²´ë¥¼ ì°¾ì•˜ì„ë•Œ
+
+            //hitÇÑ Ãæµ¹Ã¼¸¦ Ã£¾Ò´Ù
             if (foundHit)
             {
-                if (cloestHit.distance <= 0f)
+                if(cloestHit.distance <= 0f)
                 {
                     cloestHit.point = root.position;
                     cloestHit.normal = -transform.forward;
-
                 }
+
                 OnHit(cloestHit.point, cloestHit.normal, cloestHit.collider);
             }
 
             lastRootPosition = root.position;
         }
 
-        //Hit êµ¬í˜„, ë°ë¯¸ì§€, vfx, Sfx
-        private void OnHit(Vector3 point, Vector3 normal, Collider collider)
+        //À¯È¿ÇÑ hitÀÎÁö ÆÇÁ¤
+        bool IsHitValid(RaycastHit hit)
         {
-            if (damageArea)
+            //IgnoreHitDectection ÄÄÆ÷³ÍÆ®¸¦ °¡Áø Äİ¶óÀÌ´õ ¹«½Ã
+            if(hit.collider.GetComponent<IgnoreHitDectection>())
+            {
+                return false;
+            }
+
+            //ignoredColliers¿¡ Æ÷ÇÔµÈ Äİ¶óÀÌ´õ ¹«½Ã
+            if (ignoredColliers != null && ignoredColliers.Contains(hit.collider))
+            {
+                return false;
+            }
+
+            //trigger collider°¡ DamageableÀÌ ¾ø¾î¾ß µÈ´Ù
+            if (hit.collider.isTrigger && hit.collider.GetComponent<Damageable>() == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        //Hit ±¸Çö: µ¥¹ÌÁö, Vfx, Sfx,
+        void OnHit(Vector3 point, Vector3 normal, Collider collider)
+        {
+            //µ¥¹ÌÁö
+            if(damageArea)
             {
                 damageArea.InflictDamageArea(damage, point, hittableLayers, QueryTriggerInteraction.Collide, projectileBase.Owner);
             }
@@ -138,52 +171,29 @@ namespace Unity.FPS.Gameplay
                     damageable.InflictDamage(damage, false, projectileBase.Owner);
                 }
             }
-            //Debug.Log($"damage = {damage}");
-
+            
 
             //Vfx
-            if (impactVfxPrefab)
+            if (impackVfxPrefab)
             {
-                GameObject impactObject = Instantiate(impactVfxPrefab, point + (normal * impactVfxSpawnOffset), Quaternion.LookRotation(normal));
-                if (impactVfxLifeTime > 0f)
+                GameObject impactObject = Instantiate(impackVfxPrefab, point + (normal * impactVfxSpawnOffset), Quaternion.LookRotation(normal));
+                if(impactVfxLifeTime > 0f)
                 {
                     Destroy(impactObject, impactVfxLifeTime);
                 }
             }
 
             //Sfx
-            if (impactSfxClip)
+            if(impactSfxClip)
             {
-                //ì¶©ëŒìœ„ì¹˜ì— ê²Œì„ì˜¤ë¸Œì íŠ¸ë¥¼ ìƒì„±í•˜ê³  AudioSource ì»´í¬ë„ŒíŠ¸ë¥¼ ì¶”ê°€í•´ì„œ ì§€ì •ëœ Clipì¬ìƒ
+                //Ãæµ¹À§Ä¡¿¡ °ÔÀÓ¿ÀºêÁ§Æ®À» »ı¼ºÇÏ°í AudioSource ÄÄÆ÷³ÍÆ®¸¦ Ãß°¡ÇØ¼­ ÁöÁ¤µÈ Å¬¸³À» ÇÃ·¹ÀÌÇÑ´Ù
                 AudioUtility.CreateSfx(impactSfxClip, point, 1f, 3f);
             }
 
-            //ë°œì‚¬ì²´ í‚¬
+            //¹ß»çÃ¼ Å³
             Destroy(gameObject);
         }
 
-        //ìœ íš¨í•œ hitì¸ì§€ íŒì •
-        bool IsHitValid(RaycastHit hit)
-        {
-            //IgnoreHitDectection ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì§„ ì½œë¼ì´ë”ëŠ” ì œì™¸
-            if (hit.collider.GetComponent<IgnoreHitDectection>())
-            {
-                return false;
-            }
 
-            //ignoredColliersì— í¬í•¨ëœ ì½œë¼ì´ë” ë¬´ì‹œ
-            if (ignoredColliders != null && ignoredColliders.Contains(hit.collider))
-            {
-                return false;
-            }
-
-            //Damageableì´ ì—†ëŠ” íŠ¸ë¦¬ê±° ì½œë¼ì´ë” ë¬´ì‹œ
-            if (hit.collider.isTrigger && hit.collider.GetComponent<Damageable>() == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
     }
 }

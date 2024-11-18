@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Unity.FPS.AI
 {
     /// <summary>
-    /// Enemy ìƒíƒœ
+    /// Enemy »óÅÂ  
     /// </summary>
     public enum AIState
     {
@@ -14,7 +14,7 @@ namespace Unity.FPS.AI
     }
 
     /// <summary>
-    /// ì´ë™í•˜ëŠ” Enemyì˜ ìƒíƒœë“¤ì„ êµ¬í˜„í•˜ëŠ” í´ë˜ìŠ¤
+    /// ÀÌµ¿ÇÏ´Â EnemyÀÇ »óÅÂµéÀ» ±¸ÇöÇÏ´Â Å¬·¡½º
     /// </summary>
     public class EnemyMobile : MonoBehaviour
     {
@@ -24,14 +24,18 @@ namespace Unity.FPS.AI
 
         public AIState AiState { get; private set; }
 
-        //ì´ë™
+        //ÀÌµ¿
         public AudioClip movementSound;
-        public MinMaxFloat pitchMovementSpeed;
+        public MinMaxFloat pitchMovenemtSpeed;
 
         private AudioSource audioSource;
 
-        //ë°ë¯¸ì§€
+        //µ¥¹ÌÁö - ÀÌÆåÆ®
         public ParticleSystem[] randomHitSparks;
+
+        //Detected
+        public ParticleSystem[] detectedVfxs;
+        public AudioClip detectedSfx;
 
         //animation parameter
         const string k_AnimAttackParameter = "Attack";
@@ -43,60 +47,122 @@ namespace Unity.FPS.AI
 
         private void Start()
         {
-            //ì°¸ì¡°
+            //ÂüÁ¶            
             enemyController = GetComponent<EnemyController>();
             enemyController.Damaged += OnDamaged;
+            enemyController.OnDetectedTarget += OnDetected;
+            enemyController.OnLostTarget += OnLost;
 
             audioSource = GetComponent<AudioSource>();
             audioSource.clip = movementSound;
             audioSource.Play();
 
-            //ì´ˆê¸°í™”
+            //ÃÊ±âÈ­
             AiState = AIState.Patrol;
         }
 
-
         private void Update()
         {
-            //ìƒíƒœêµ¬í˜„
+            //»óÅÂ º¯°æ/±¸Çö
+            UpdateAiStateTransition();
             UpdateCurrentAiState();
 
-            //ì†ë„ì— ë”°ë¥¸ íš¨ê³¼(ì• ë‹ˆ/ì‚¬ìš´ë“œ)
+            //¼Óµµ¿¡ µû¸¥ ¾Ö´Ï/»ç¿îµå È¿°ú
             float moveSpeed = enemyController.Agent.velocity.magnitude;
-            animator.SetFloat(k_AnimMoveSpeedParameter, moveSpeed);             //ì• ë‹ˆ
-            audioSource.pitch = pitchMovementSpeed.GetValueFromRatio(moveSpeed / enemyController.Agent.speed);
-
+            animator.SetFloat(k_AnimMoveSpeedParameter, moveSpeed);         //¾Ö´Ï
+            audioSource.pitch = pitchMovenemtSpeed.GetValueFromRatio(moveSpeed/enemyController.Agent.speed);
         }
 
-        //ìƒíƒœì— ë”°ë¥¸ Enemy ìƒíƒœêµ¬í˜„
+        //»óÅÂ¿¡ µû¸¥ Enemy ±¸Çö
         private void UpdateCurrentAiState()
         {
-            switch (AiState)
+            switch(AiState)
             {
                 case AIState.Patrol:
                     enemyController.UpdatePathDestination(true);
                     enemyController.SetNavDestination(enemyController.GetDestinationOnPath());
                     break;
                 case AIState.Follow:
+                    enemyController.SetNavDestination(enemyController.KnonwDetectedTarget.transform.position);
+                    enemyController.OrientToward(enemyController.KnonwDetectedTarget.transform.position);
+                    enemyController.OrientWeaponsToward(enemyController.KnonwDetectedTarget.transform.position);
                     break;
                 case AIState.Attack:
+                    enemyController.OrientToward(enemyController.KnonwDetectedTarget.transform.position);
+                    enemyController.OrientWeaponsToward(enemyController.KnonwDetectedTarget.transform.position);
+                    enemyController.TryAttack(enemyController.KnonwDetectedTarget.transform.position);
                     break;
-                default:
+            }
+        }
+
+        //»óÅÂ º¯°æ¿¡ µû¸¥ ±¸Çö
+        private void UpdateAiStateTransition()
+        {
+            switch (AiState)
+            {
+                case AIState.Patrol: 
+                    break;
+                case AIState.Follow:
+                    if(enemyController.IsSeeingTarget && enemyController.IsTargetInAttackRange)
+                    {
+                        AiState = AIState.Attack;
+                        enemyController.SetNavDestination(transform.position);  //Á¤Áö
+                    }
+                    break;
+                case AIState.Attack:
+                    if (enemyController.IsTargetInAttackRange == false)
+                    {
+                        AiState = AIState.Follow;
+                    }
                     break;
             }
         }
 
         private void OnDamaged()
         {
-            //ìŠ¤íŒŒí¬ íŒŒí‹°í´ ëœë¤ì¬ìƒ
-            if (randomHitSparks.Length > 0)
+            //½ºÆÄÅ© ÆÄÆ¼Å¬ - ·£´ıÇÏ°Ô ÇÏ³ª ¼±ÅÃÇØ¼­ ÇÃ·¹ÀÌ
+            if(randomHitSparks.Length > 0)
             {
-                int rand = Random.Range(0, randomHitSparks.Length);
-                randomHitSparks[rand].Play();
+                int randNum = Random.Range(0, randomHitSparks.Length);
+                randomHitSparks[randNum].Play();
             }
 
-            //ë°ë¯¸ì§€ ì• ë‹ˆ
+            //µ¥¹ÌÁö ¾Ö´Ï
             animator.SetTrigger(k_AnimOnDamagedParameter);
         }
+
+        private void OnDetected()
+        {
+            //»óÅÂ º¯°æ
+            AiState = AIState.Follow;
+
+            //Vfx
+            for (int i = 0; i < detectedVfxs.Length; i++)
+            {
+                detectedVfxs[i].Play();
+            }
+
+            //Sfx
+            if(detectedSfx)
+            {
+                AudioUtility.CreateSfx(detectedSfx, this.transform.position, 1f);
+            }
+
+            //anim
+            animator.SetBool(k_AnimAlertedParameter, true);
+        }
+
+        private void OnLost()
+        {
+            //Vfx
+            for (int i = 0; i < detectedVfxs.Length; i++)
+            {
+                detectedVfxs[i].Stop();
+            }
+
+            //anim
+            animator.SetBool(k_AnimAlertedParameter, false);
+        }
+
     }
 }

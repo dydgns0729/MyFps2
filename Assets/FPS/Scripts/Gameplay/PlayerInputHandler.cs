@@ -24,7 +24,7 @@ namespace Unity.FPS.Gameplay
         private bool aimInputWasHeld = false;
 
         void Start()
-        {
+        {   
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -109,7 +109,7 @@ namespace Unity.FPS.Gameplay
         }
 
         public bool GetCrouchInputDown()
-        {
+        {            
             /*if (CanProcessInput())
             {
                 return Input.GetButtonDown(GameConstants.k_ButtonNameCrouch);
@@ -138,12 +138,12 @@ namespace Unity.FPS.Gameplay
             return false;
         }
 
-        //ë¬´ê¸° êµì²´
+        //¹«±â ±³Ã¼
         public int GetSwitchWeaponInput()
         {
             if (CanProcessInput())
             {
-                if (Input.GetAxis(GameConstants.k_AxisNameNextWeapon) > 0f)
+                if(Input.GetAxis(GameConstants.k_AxisNameNextWeapon) > 0f)
                 {
                     return 1;
                 }
@@ -160,40 +160,44 @@ namespace Unity.FPS.Gameplay
                     return 1;
                 }
             }
+
             return 0;
         }
 
-        //ì¡°ì¤€ì‹œì‘
+        //Á¶ÁØ ½ÃÀÛ
         public bool GetAimInputDown()
         {
             if (CanProcessInput())
             {
-                return GetAimInputHeld()==true && aimInputWasHeld == false;
+                return GetAimInputHeld() == true && aimInputWasHeld == false;
             }
+
             return false;
         }
 
-        //ì¡°ì¤€ë
+        //Á¶ÁØ ³¡
         public bool GetAimInputUp()
         {
             if (CanProcessInput())
             {
                 return GetAimInputHeld() == false && aimInputWasHeld == true;
             }
+
             return false;
         }
 
-        //ì¡°ì¤€ - ë§ˆìš°ìŠ¤ ìš°í´ë¦­í•˜ëŠ” ë™ì•ˆ
+        //Á¶ÁØ - ¸¶¿ì½º ¿ìÅ¬¸¯ÇÏ´Â µ¿¾È
         public bool GetAimInputHeld()
         {
             if (CanProcessInput())
             {
                 return Input.GetButton(GameConstants.k_ButtonNameAim);
             }
+
             return false;
         }
 
-        //íŒŒì´ì–´ ë²„íŠ¼ ëˆ„ë¥´ê¸° ì‹œì‘
+        //ÆÄÀÌ¾î ¹öÆ° ´©¸£±â ½ÃÀÛ
         public bool GetFireInputDown()
         {
             if (CanProcessInput())
@@ -203,7 +207,8 @@ namespace Unity.FPS.Gameplay
             }
             return false;
         }
-        //íŒŒì´ì–´ ë²„íŠ¼ ëˆ„ë¥´ê¸° ë
+
+        //ÆÄÀÌ¾î ¹öÆ° ´©¸£±â ³¡
         public bool GetFireInputUp()
         {
             if (CanProcessInput())
@@ -213,7 +218,8 @@ namespace Unity.FPS.Gameplay
             }
             return false;
         }
-        //íŒŒì´ì–´ ë²„íŠ¼ ëˆ„ë¥´ëŠ” ì¤‘
+
+        //ÆÄÀÌ¾î ¹öÆ° ´©¸£´Â Áß
         public bool GetFireInputHeld()
         {
             if (CanProcessInput())
@@ -222,5 +228,7 @@ namespace Unity.FPS.Gameplay
             }
             return false;
         }
+
+
     }
 }

@@ -3,22 +3,22 @@ using UnityEngine;
 namespace Unity.FPS.Game
 {
     /// <summary>
-    /// ratioë§¤ê°œ ë³€ìˆ˜ë¡œ ë°›ì•„ Floatì˜ Minì—ì„œ Max ì‚¬ì´ì˜ Lerp ê°’ ë°˜í™˜
+    /// ratio¸Å°³ º¯¼ö·Î ¹Ş¾Æ FloatÀÇ Min¿¡¼­ Max »çÀÌÀÇ Lerp °ª ¹İÈ¯ 
     /// </summary>
     [System.Serializable]
     public struct MinMaxFloat
     {
         public float Min;
         public float Max;
+
         public float GetValueFromRatio(float ratio)
         {
-
             return Mathf.Lerp(Min, Max, ratio);
         }
     }
 
     /// <summary>
-    /// ratioë§¤ê°œ ë³€ìˆ˜ë¡œ ë°›ì•„ Colorì˜ Minì—ì„œ Max ì‚¬ì´ì˜ Lerp ê°’ ë°˜í™˜
+    /// ratio¸Å°³ º¯¼ö·Î ¹Ş¾Æ ColorÀÇ Min¿¡¼­ Max »çÀÌÀÇ Lerp °ª ¹İÈ¯ 
     /// </summary>
     [System.Serializable]
     public struct MinMaxColor
@@ -26,23 +26,25 @@ namespace Unity.FPS.Game
         public Color Min;
         public Color Max;
 
-        public Color GetValueFromRation(float ratio)
+        public Color GetValueFromRatio(float ratio)
         {
-            return Color.Lerp(Min, Max, ratio); 
+            return Color.Lerp(Min, Max, ratio);
         }
     }
 
     /// <summary>
-    /// ratioë§¤ê°œ ë³€ìˆ˜ë¡œ ë°›ì•„ Vector3ì˜ Minì—ì„œ Max ì‚¬ì´ì˜ Lerp ê°’ ë°˜í™˜
+    /// ratio¸Å°³ º¯¼ö·Î ¹Ş¾Æ Vector3ÀÇ Min¿¡¼­ Max »çÀÌÀÇ Lerp °ª ¹İÈ¯ 
     /// </summary>
     [System.Serializable]
     public struct MinMaxVector3
     {
         public Vector3 Min;
         public Vector3 Max;
+
         public Vector3 GetValueFromRatio(float ratio)
         {
             return Vector3.Lerp(Min, Max, ratio);
         }
     }
+
 }

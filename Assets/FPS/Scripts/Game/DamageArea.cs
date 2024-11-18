@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Unity.FPS.Game
 {
     /// <summary>
-    /// ì¼ì • ë²”ìœ„ ì•ˆì— ìˆëŠ” ì½œë¼ì´ë” ì˜¤ë¸Œì íŠ¸ ë°ë¯¸ì§€ ì£¼ê¸°
+    /// ÀÏÁ¤ ¹üÀ§ ¾È¿¡ ÀÖ´Â Äİ¶óÀÌ´õ ¿ÀºêÁ§Æ® µ¥¹ÌÁö ÁÖ±â
     /// </summary>
     public class DamageArea : MonoBehaviour
     {
@@ -16,10 +16,11 @@ namespace Unity.FPS.Game
         public void InflictDamageArea(float damage, Vector3 center, LayerMask layers, QueryTriggerInteraction interaction, GameObject owner)
         {
             Dictionary<Health, Damageable> uniqueDamagedHealth = new Dictionary<Health, Damageable>();
-            Collider[] affectedColliders = Physics.OverlapSphere(center, areaOfEffectDistance, layers, interaction);
-            foreach (Collider c in affectedColliders)
+
+            Collider[] affectedColliers = Physics.OverlapSphere(center, areaOfEffectDistance, layers, interaction);
+            foreach (Collider collider in affectedColliers)
             {
-                Damageable damageable = c.GetComponent<Damageable>();
+                Damageable damageable = collider.GetComponent<Damageable>();
                 if (damageable)
                 {
                     Health health = damageable.GetComponentInParent<Health>();
@@ -30,11 +31,12 @@ namespace Unity.FPS.Game
                 }
             }
 
-            //ë°ë¯¸ì§€ ì£¼ê¸°
-            foreach (var uniqueDamageable in uniqueDamagedHealth.Values)
+            //µ¥¹ÌÁö ÁÖ±â
+            foreach(var uniqueDamageable in uniqueDamagedHealth.Values)
             {
                 float distance = Vector3.Distance(uniqueDamageable.transform.position, center);
-                float curveDamage = damage * damageRatioOverDistance.Evaluate(distance / areaOfEffectDistance);
+                float curveDamage = damage * damageRatioOverDistance.Evaluate(distance/ areaOfEffectDistance);
+                Debug.Log($"distance: {distance} - curveDamage: {curveDamage}");
                 uniqueDamageable.InflictDamage(curveDamage, true, owner);
             }
         }

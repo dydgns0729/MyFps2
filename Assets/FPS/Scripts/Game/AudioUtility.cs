@@ -3,25 +3,25 @@ using UnityEngine;
 namespace Unity.FPS.Game
 {
     /// <summary>
-    /// ì˜¤ë””ì˜¤ í”Œë ˆì´ ê´€ë ¨ ê¸°ëŠ¥ êµ¬í˜„
+    /// ¿Àµğ¿À ÇÃ·¹ÀÌ °ü·Ã ±â´É ±¸Çö
     /// </summary>
     public class AudioUtility : MonoBehaviour
     {
-        public static void CreateSfx(AudioClip clip, Vector3 position, float spartialBlend, float rolloffDistance = 1f)
+        //ÁöÁ¤µÈ À§Ä¡¿¡ °ÔÀÓ¿ÀºêÁ§Æ® »ı¼ºÇÏ°í AudioSource ÄÄÆ÷³ÍÆ®¸¦ Ãß°¡ÇØ¼­ ÁöÁ¤µÈ Å¬¸³À» ÇÃ·¹ÀÌÇÑ´Ù
+        //Å¬¸³ »ç¿îµå ÇÃ·¹ÀÌ°¡ ³¡³ª¸é ÀÚµ¿À¸·Î Å³ÇÑ´Ù - TimeSelfDestruct ÄÄÆ÷³ÍÆ® ÀÌ¿ë
+        public static void CreateSfx(AudioClip clip, Vector3 position, float spartialBlend, float rolloffDistanceMin = 1f)
         {
-            //ì§€ì •ëœ ìœ„ì¹˜ì— ê²Œì„ìœ¼ë³´ì íŠ¸ë¥¼ ìƒì„±í•˜ê³  AudioSource ì»´í¬ë„ŒíŠ¸ë¥¼ ì¶”ê°€í•´ì„œ ì§€ì •ëœ í´ë¦½ì„ í”Œë ˆì´í•œë‹¤.
-            //í´ë¦½ ì‚¬ìš´ë“œ í”Œë ˆì´ê°€ ëë‚˜ë©´ ìë™ìœ¼ë¡œ í‚¬í•œë‹¤ - TimeSelfDestruct ì»´í¬ë„ŒíŠ¸ ì´ìš©
             GameObject impactSfxInstance = new GameObject();
             impactSfxInstance.transform.position = position;
 
-            //Audio clip play
+            //audio clip play
             AudioSource source = impactSfxInstance.AddComponent<AudioSource>();
             source.clip = clip;
             source.spatialBlend = spartialBlend;
-            source.minDistance = rolloffDistance;
+            source.minDistance = rolloffDistanceMin;
             source.Play();
 
-            //ì˜¤ë¸Œì íŠ¸ kill
+            //¿ÀºêÁ§Æ® kill
             TimeSelfDestruct timeSelfDestruct = impactSfxInstance.AddComponent<TimeSelfDestruct>();
             timeSelfDestruct.lifeTime = clip.length;
         }

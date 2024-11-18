@@ -10,24 +10,23 @@ namespace Unity.FPS.UI
 
         private PlayerWeaponsManager weaponsManager;
         #endregion
+
         private void Start()
         {
-            //Ï∞∏Ï°∞
+            //¬¸¡∂
             weaponsManager = GameObject.FindObjectOfType<PlayerWeaponsManager>();
-            //Action Ìï®Ïàò Îì±Î°ù
+            //Action «‘ºˆ µÓ∑œ
             weaponsManager.OnScopedWeapon += OnScope;
             weaponsManager.OffScopedWeapon += OffScope;
-
         }
 
         public void OnScope()
         {
-            //Debug.Log("dd");
             scopeUI.SetActive(true);
         }
 
         public void OffScope()
-        {
+        { 
             scopeUI.SetActive(false);
         }
     }

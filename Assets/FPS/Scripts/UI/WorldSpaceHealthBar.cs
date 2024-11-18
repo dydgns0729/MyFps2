@@ -11,7 +11,8 @@ namespace Unity.FPS.UI
         public Image healthBarImage;
 
         public Transform healthBarPivot;
-        //hpê°€ í’€ì´ë©´ healthBarë¥¼ ìˆ¨ê¸´ë‹¤.
+
+        //hp°¡ Ç®ÀÌ¸é healthBar¸¦ ¼û±ä´Ù
         [SerializeField] private bool hideFullHealthBar = true;
         #endregion
 
@@ -19,14 +20,14 @@ namespace Unity.FPS.UI
         {
             healthBarImage.fillAmount = health.GetRatio();
 
-            //UIê°€ í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ë„ë¡ í•œë‹¤
+            //UI°¡ ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸µµ·Ï ÇÑ´Ù
             healthBarPivot.LookAt(Camera.main.transform.position);
 
-            if (hideFullHealthBar)
+            //hp°¡ Ç®ÀÌ¸é healthBar¸¦ ¼û±ä´Ù
+            if(hideFullHealthBar)
             {
                 healthBarPivot.gameObject.SetActive(healthBarImage.fillAmount != 1f);
             }
         }
-
     }
 }

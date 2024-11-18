@@ -3,14 +3,14 @@ using UnityEngine;
 namespace Unity.FPS.Game
 {
     /// <summary>
-    /// ê²Œì„ì— ë“±ì¥í•˜ëŠ” Actorë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤
+    /// °ÔÀÓ¿¡ µîÀåÇÏ´Â Actor¸¦ °ü¸®ÇÏ´Â Å¬·¡½º
     /// </summary>
     public class Actor : MonoBehaviour
     {
         #region Variables
-        //ì†Œì† - ì•„êµ°, ì êµ° êµ¬ë¶„
+        //¼Ò¼Ó - ¾Æ±º, Àû±º ±¸ºĞ
         public int affiliation;
-        //ì¡°ì¤€ì 
+        //Á¶ÁØÁ¡
         public Transform aimPoint;
 
         private ActorManager actorManager;
@@ -18,10 +18,10 @@ namespace Unity.FPS.Game
 
         private void Start()
         {
-            //Actor ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€(ë“±ë¡)
+            //Actor ¸®½ºÆ®¿¡ Ãß°¡(µî·Ï)
             actorManager = GameObject.FindObjectOfType<ActorManager>();
-            //ë¦¬ìŠ¤íŠ¸ì— í¬í•¨ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
-            if (actorManager.Actors.Contains(this) == false)
+            //Actor ¸®½ºÆ®¿¡ Æ÷ÇÔµÇ¾î ÀÖ´ÂÁö Ã¼Å©
+            if (actorManager.Actors.Contains(this)== false)
             {
                 actorManager.Actors.Add(this);
             }
@@ -29,7 +29,7 @@ namespace Unity.FPS.Game
 
         private void OnDestroy()
         {
-            //ë¦¬ìŠ¤íŠ¸ì—ì„œ ì‚­ì œ
+            //Actor ¸®½ºÆ®¿¡¼­ »èÁ¦
             if (actorManager)
             {
                 actorManager.Actors.Remove(this);

@@ -1,13 +1,12 @@
-using System;
 using Unity.FPS.Game;
 using UnityEngine;
 
 namespace Unity.FPS.Gameplay
 {
     /// <summary>
-    /// ì¶©ì „ìš© ë°œì‚¬ì²´ë¥¼ ë°œì‚¬í• ë•Œ ì¶©ì „ëŸ‰ì— ë”°ë¼ ë°œì‚¬ì²´ì˜ ì†ì„±ê°’ì„ ì„¤ì •
+    /// ÃæÀü¿ë ¹ß»çÃ¼¸¦ ¹ß»çÇÒ¶§ ÃæÀü·®¿¡ ¹ß»çÃ¼ÀÇ ¼Ó¼º°ªÀ» ¼³Á¤
     /// </summary>
-    public class ProjectileChargeParameter : MonoBehaviour
+    public class PjojectileChargeParameters : MonoBehaviour
     {
         #region Variables
         private ProjectileBase projectileBase;
@@ -20,21 +19,22 @@ namespace Unity.FPS.Gameplay
 
         private void OnEnable()
         {
-            //ì°¸ì¡°
+            //ÂüÁ¶
             projectileBase = GetComponent<ProjectileBase>();
             projectileBase.OnShoot += OnShoot;
         }
 
-        //ë°œì‚¬ì²´ ë°œì‚¬ì‹œ ProjectileBasedì˜ OnShoot ë¸ë¦¬ê²Œì´íŠ¸ í•¨ìˆ˜ì—ì„œ í˜¸ì¶œ
-        //ë°œì‚¬ì˜ ì†ì„±ê°’ì„ Chargeê°’ì— ë”°ë¼ ì„¤ì •
-        private void OnShoot()
+        //¹ß»çÃ¼ ¹ß»ç½Ã ProjectileBasedÀÇ OnShoot µ¨¸®°ÔÀÌÆ® ÇÔ¼ö¿¡¼­ È£Ãâ
+        //¹ß»çÀÇ ¼Ó¼º°ªÀ» Charge°ª¿¡ µû¶ó ¼³Á¤
+        void OnShoot()
         {
-            //ì¶©ì „ëŸ‰ì— ë”°ë¼ Projectil(ë°œì‚¬ì²´)ì˜ ì†ì„± ê°’ì„ ë³€ê²½
+            //ÃæÀü·®¿¡ µû¶ó ¹ß»çÃ¼ ¼Ó¼º°ª ¼³Á¤
             ProjectileStandard projectileStandard = GetComponent<ProjectileStandard>();
             projectileStandard.damage = Damage.GetValueFromRatio(projectileBase.InitialCharge);
             projectileStandard.speed = Speed.GetValueFromRatio(projectileBase.InitialCharge);
             projectileStandard.gravityDown = GravityDown.GetValueFromRatio(projectileBase.InitialCharge);
             projectileStandard.radius = Radius.GetValueFromRatio(projectileBase.InitialCharge);
         }
+
     }
 }

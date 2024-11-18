@@ -1,30 +1,30 @@
-using System;
-using Unity.FPS.Game;
 using UnityEngine;
+using Unity.FPS.Game;
 
 namespace Unity.FPS.Gameplay
 {
     /// <summary>
-    /// ì¶©ì „ìš© ë°œì‚¬ì²´ë¥¼ ë°œì‚¬í• ë•Œ ì¶©ì „ëŸ‰ì— ë”°ë¼ ë°œì‚¬ì²´ì˜ í¬ê¸° ì„¤ì •
+    /// ÃæÀü¿ë ¹ß»çÃ¼¸¦ ¹ß»çÇÒ¶§ ÃæÀü·®¿¡ ¹ß»çÃ¼ÀÇ °ÔÀÓ¿ÀºêÁ§Æ® Å©±â °áÁ¤
     /// </summary>
     public class ChargedProjectileEffectHandler : MonoBehaviour
     {
         #region Variables
         private ProjectileBase projectileBase;
-        public GameObject chargeObject;
+
+        public GameObject charageObejct;
         public MinMaxVector3 scale;
         #endregion
 
         private void OnEnable()
         {
-            //ì°¸ì¡°
+            //ÂüÁ¶
             projectileBase = GetComponent<ProjectileBase>();
             projectileBase.OnShoot += OnShoot;
         }
 
-        private void OnShoot()
+        void OnShoot()
         {
-            chargeObject.transform.localScale = scale.GetValueFromRatio(projectileBase.InitialCharge);
+            charageObejct.transform.localScale = scale.GetValueFromRatio(projectileBase.InitialCharge);
         }
     }
 }

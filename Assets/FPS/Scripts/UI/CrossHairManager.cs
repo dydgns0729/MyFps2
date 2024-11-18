@@ -1,23 +1,23 @@
-using Unity.FPS.Game;
-using Unity.FPS.Gameplay;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.FPS.Game;
+using Unity.FPS.Gameplay;
 
 namespace Unity.FPS.UI
 {
-    public class CrossHairManager : MonoBehaviour
+    public class CrosshairManager : MonoBehaviour
     {
         #region Variables
-        public Image crosshairImage;                //Crossí—¤ì–´ UI ì´ë¯¸ì§€
-        public Sprite nullCrosshairSprite;          //ì•¡í‹°ë¸Œí•œ ë¬´ê¸°ê°€ ì—†ì„ë•Œ ë³´ì´ëŠ” í¬ë¡œìŠ¤í—¤ì–´ ì´ë¯¸ì§€
+        public Image crosshairImage;                    //Å©·Î½ºÇì¾î UI ÀÌ¹ÌÁö
+        public Sprite nullCrosshairSprite;              //¾×Æ¼ºêÇÑ ¹«±â°¡ ¾øÀ»¶§
 
         private RectTransform crosshairRectTransform;
 
-        private CrossHairData crosshairDefault;     //í‰ìƒì‹œ, ê¸°ë³¸
-        private CrossHairData crosshairTarget;      //íƒ€ê²ŸíŒ… ëì„ë•Œ
+        private CrossHairData crosshairDefault;         //Æò»ó½Ã, ±âº»
+        private CrossHairData crosshairTarget;          //Å¸°ÙÆÃ µÇ¾úÀ»¶§
 
-        private CrossHairData crosshairCurrent;     //ì‹¤ì§ˆì ìœ¼ë¡œ ì„¸íŒ…ë˜ëŠ” í¬ë¡œìŠ¤í—¤ì–´
-        [SerializeField] private float crosshairUpdateShrpness = 5.0f;  //Lerp ë³€ìˆ˜
+        private CrossHairData crosshairCurrent;         //½ÇÁúÀûÀ¸·Î ±×¸®´Â Å©·Î½ºÇì¾î
+        [SerializeField] private float crosshairUpdateShrpness = 5.0f;   //Lerp º¯¼ö
 
         private PlayerWeaponsManager weaponsManager;
 
@@ -26,10 +26,9 @@ namespace Unity.FPS.UI
 
         private void Start()
         {
-            //ì°¸ì¡°
+            //ÂüÁ¶
             weaponsManager = GameObject.FindObjectOfType<PlayerWeaponsManager>();
-
-            //ì•¡í‹°ë¸Œí•œ ë¬´ê¸° í¬ë¡œìŠ¤ í—¤ì–´ë¡œ ë³€ê²½
+            //¾×Æ¼ºêÇÑ ¹«±â Å©·Î½º Çì¾î º¸ÀÌ±â
             OnWeaponChanged(weaponsManager.GetActiveWeapon());
 
             weaponsManager.OnSwitchToWeapon += OnWeaponChanged;
@@ -42,42 +41,47 @@ namespace Unity.FPS.UI
             wasPointingAtEnemy = weaponsManager.IsPointingAtEnemy;
         }
 
-        //í¬ë¡œìŠ¤í—¤ì–´ ê·¸ë¦¬ê¸°
+        //Å©·Î½º Çì¾î ±×¸®±â
         void UpdateCrosshairPointingAtEnemy(bool force)
         {
-            if (crosshairDefault.CrossHairSprite == null) return;
-            //í‰ìƒì‹œ? íƒ€ì¼“íŒ…?
-            if (weaponsManager.IsPointingAtEnemy && (force || !wasPointingAtEnemy))        //ì ì„ í¬ì°©í•œ ìˆœê°„
+            if (crosshairDefault.CrossHairSprite == null)
+                return;
+
+            //Æò»ó½Ã?, Å¸°ÙÆÃ?
+            if((force || wasPointingAtEnemy == false) && weaponsManager.IsPointingAtEnemy == true) //ÀûÀ» Æ÷ÂøÇÏ´Â ¼ø°£
             {
                 crosshairCurrent = crosshairTarget;
                 crosshairImage.sprite = crosshairCurrent.CrossHairSprite;
                 crosshairRectTransform.sizeDelta = crosshairCurrent.CrossHairSize * Vector2.one;
             }
-            else if (!weaponsManager.IsPointingAtEnemy && (force || wasPointingAtEnemy))   //ì ì„ ë†“ì¹œ ìˆœê°„
+            else if ((force || wasPointingAtEnemy == true) &&  weaponsManager.IsPointingAtEnemy == false) //ÀûÀ» ³õÄ¡´Â ¼ø°£
             {
                 crosshairCurrent = crosshairDefault;
                 crosshairImage.sprite = crosshairCurrent.CrossHairSprite;
                 crosshairRectTransform.sizeDelta = crosshairCurrent.CrossHairSize * Vector2.one;
             }
 
-            crosshairImage.color = Color.Lerp(crosshairImage.color, crosshairCurrent.CrossHairColor, crosshairUpdateShrpness * Time.deltaTime);
-            crosshairRectTransform.sizeDelta = Mathf.Lerp(crosshairRectTransform.sizeDelta.x, crosshairCurrent.CrossHairSize, crosshairUpdateShrpness * Time.deltaTime) * Vector2.one;
+            crosshairImage.color = Color.Lerp(crosshairImage.color, crosshairCurrent.CrossHairColor,
+                crosshairUpdateShrpness * Time.deltaTime);
+            crosshairRectTransform.sizeDelta = Mathf.Lerp(crosshairRectTransform.sizeDelta.x, crosshairCurrent.CrossHairSize,
+                crosshairUpdateShrpness * Time.deltaTime) * Vector2.one;
         }
 
-        //ë¬´ê¸°ê°€ ë°”ë€”ë•Œë§ˆë‹¤ crosshairImageë¥¼ ë³€ê²½
+        //¹«±â°¡ ¹Ù²ğ¶§¸¶´Ù crosshairImage¸¦ °¢°¢ÀÇ ¹«±â CrossHairÀÌ¹ÌÁö·Î ¹Ù²Ù±â
         void OnWeaponChanged(WeaponController newWeapon)
         {
-            if (newWeapon)
+            if(newWeapon)
             {
                 crosshairImage.enabled = true;
                 crosshairRectTransform = crosshairImage.GetComponent<RectTransform>();
-                //ì•¡í‹°ë¸Œ ë¬´ê¸°ì˜ í¬ë¡œìŠ¤í—¤ì–´ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
+
+                //¾×Æ¼ºê ¹«±âÀÇ Å©·Î½ºÇì¾î Á¤º¸ °¡Á®¿À±â
                 crosshairDefault = newWeapon.crosshairDefault;
-                crosshairTarget = newWeapon.crosshairTargetInSight;
+                crosshairTarget = newWeapon.crosshairTargetInSight;                
             }
             else
             {
-                if (nullCrosshairSprite)
+                if(nullCrosshairSprite)
                 {
                     crosshairImage.sprite = nullCrosshairSprite;
                 }
@@ -86,6 +90,7 @@ namespace Unity.FPS.UI
                     crosshairImage.enabled = false;
                 }
             }
+
             UpdateCrosshairPointingAtEnemy(true);
         }
     }

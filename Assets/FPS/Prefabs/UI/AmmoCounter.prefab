@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.70980394}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.4}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.713
+  m_FillAmount: 0.559
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -211,8 +211,8 @@ GameObject:
   m_Component:
   - component: {fileID: 645032500860478886}
   - component: {fileID: 645032500860478887}
-  - component: {fileID: 5067633104967749050}
-  - component: {fileID: -4960641629155602030}
+  - component: {fileID: 3268909784133744544}
+  - component: {fileID: 8684264634113539166}
   m_Layer: 5
   m_Name: AmmoCounter
   m_TagString: Untagged
@@ -255,7 +255,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &5067633104967749050
+--- !u!114 &3268909784133744544
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,17 +264,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 645032500860478885}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e145000512977f643a1d4a98f242ef8d, type: 3}
+  m_Script: {fileID: 11500000, guid: f69515666ed1b944f94229ffa1cff5b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weaponIndexText: {fileID: 2904203937318842817}
   ammoFillImage: {fileID: 645032500597732956}
   ammoFillSharpness: 10
-  weaponSwitchSharpness: 10
   canvasGroup: {fileID: 436243220387352472}
   unSelectedOpacity: 0.5
-  fillBarColorChange: {fileID: -4960641629155602030}
---- !u!114 &-4960641629155602030
+  fillBarColorChange: {fileID: 8684264634113539166}
+--- !u!114 &8684264634113539166
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -283,16 +282,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 645032500860478885}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98bb5c6bd7d94a1459e6219da3ad6f96, type: 3}
+  m_Script: {fileID: 11500000, guid: d090eb1152cab504282580ffe181db21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   foregroundImage: {fileID: 645032500597732956}
   defaultForegroundColor: {r: 1, g: 1, b: 1, a: 1}
-  flashForegroundColorFull: {r: 0, g: 0, b: 0, a: 1}
+  flashForeGroundColorFull: {r: 0, g: 0, b: 0, a: 1}
   backgroundImage: {fileID: 645032499974091307}
-  defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0.6156863}
-  flashBackgroundColorEmpty: {r: 1, g: 0, b: 0, a: 0.6117647}
-  colorChangeSharpness: 5
+  defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 0.5019608}
+  flashBackgroundColorEmpty: {r: 1, g: 0, b: 0, a: 0.5019608}
 --- !u!1 &1644869328222790790
 GameObject:
   m_ObjectHideFlags: 0

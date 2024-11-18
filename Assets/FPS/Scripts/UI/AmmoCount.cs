@@ -1,13 +1,13 @@
-using TMPro;
-using Unity.FPS.Game;
-using Unity.FPS.Gameplay;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.FPS.Gameplay;
+using Unity.FPS.Game;
+using TMPro;
 
 namespace Unity.FPS.UI
 {
     /// <summary>
-    /// WeaponController ë¬´ê¸°ì˜ Ammo ì¹´ìš´íŠ¸ UI
+    /// WeaponController(¹«±â)ÀÇ Ammo Ä«¿îÆ® UI
     /// </summary>
     public class AmmoCount : MonoBehaviour
     {
@@ -20,48 +20,51 @@ namespace Unity.FPS.UI
         //UI
         public TextMeshProUGUI weaponIndexText;
 
-        public Image ammoFillImage;                 //Ammo rateì— ë”°ë¥¸ ê²Œì´ì§€
+        public Image ammoFillImage;                 //ammo rate¿¡ µû¸¥ °ÔÀÌÁö
 
-        [SerializeField] private float ammoFillSharpness = 10f;     //ê²Œì´ì§€ ì±„ìš°ëŠ”(ë¹„ìš°ëŠ”) ì†ë„
-        [SerializeField] private float weaponSwitchSharpness = 10f;       //ë¬´ê¸° êµì²´ì‹œ Uiê°€ ë°”ë€ŒëŠ” ì†ë„
+        [SerializeField] private float ammoFillSharpness = 10f; //°ÔÀÌÁö Ã¤¿ì´Â(ºñ¿ì´Â) ¼Óµµ
+        private float weaponSwitchSharpness = 10f;              //¹«±â ±³Ã¼½Ã UI°¡ ¹Ù²î´Â ¼Óµµ
 
         public CanvasGroup canvasGroup;
-        [SerializeField][Range(0, 1)] private float unSelectedOpacity = 0.5f;
+        [SerializeField] [Range(0,1)] private float unSelectedOpacity = 0.5f;
         private Vector3 unSelectedScale = Vector3.one * 0.8f;
 
-        //ê²Œì´ì§€ë°” ìƒ‰ ë³€ê²½
+        //°ÔÀÌÁö¹Ù »ö º¯°æ
         public FillBarColorChange fillBarColorChange;
         #endregion
 
-        //AmmoCont UI ê°’ ì´ˆê¸°í™”
-        public void Initialize(WeaponController weapon, int _weaponIndex)
+        //AmmoCount UI °ª ÃÊ±âÈ­
+        public void Initialzie(WeaponController weapon, int _weaponIndex)
         {
             weaponController = weapon;
             weaponIndex = _weaponIndex;
 
-            //ë¬´ê¸°ì¸ë±ìŠ¤
+            //¹«±â ÀÎµ¦½º
             weaponIndexText.text = (weaponIndex + 1).ToString();
 
-            //ê²Œì´ì§€ìƒ‰ ê°’ ì´ˆê¸°í™”
+            //°ÔÀÌÁö»ö °ª ÃÊ±âÈ­
             fillBarColorChange.Initialize(1f, 0.1f);
 
-            //ì°¸ì¡°
+            //ÂüÁ¶
             playerWeaponsManager = GameObject.FindObjectOfType<PlayerWeaponsManager>();
         }
 
         private void Update()
         {
             float currentFillRate = weaponController.CurrentAmmoRatio;
-            ammoFillImage.fillAmount = Mathf.Lerp(ammoFillImage.fillAmount, currentFillRate, ammoFillSharpness*Time.deltaTime);
+            ammoFillImage.fillAmount = Mathf.Lerp(ammoFillImage.fillAmount, currentFillRate, 
+                ammoFillSharpness * Time.deltaTime);
 
-            //ì•¡í‹°ë¸Œ ë¬´ê¸° êµ¬ë¶„
-            bool isActiveWeapon = weaponController == playerWeaponsManager.GetActiveWeapon();
+            //¾×Æ¼ºê ¹«±â ±¸ºĞ
+            bool isActiveWeapon = (weaponController == playerWeaponsManager.GetActiveWeapon());
             float currentOpacity = isActiveWeapon ? 1.0f : unSelectedOpacity;
-            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, currentOpacity, weaponSwitchSharpness*Time.deltaTime);
+            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, currentOpacity, 
+                weaponSwitchSharpness * Time.deltaTime);
             Vector3 currentScale = isActiveWeapon ? Vector3.one : unSelectedScale;
-            transform.localScale = Vector3.Lerp(transform.localScale, currentScale, weaponSwitchSharpness * Time.deltaTime);
+            transform.localScale = Vector3.Lerp(transform.localScale, currentScale,
+                weaponSwitchSharpness * Time.deltaTime);
 
-            //ë°°ê²½ìƒ‰ ë³€ê²½
+            //¹è°æ»ö º¯°æ
             fillBarColorChange.UpdateVisual(currentFillRate);
         }
     }
